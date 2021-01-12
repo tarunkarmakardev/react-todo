@@ -1,24 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./css/index.css";
+import TodoForm from "./components/TodoForm";
+import TodoList from "./components/TodoList";
 
 function App() {
+  const [inputText, setInputText] = useState("");
+  const [todoItems, settodoItem] = useState([]);
+
+  const handleChange = (e) => {
+    setInputText(e.target.value);
+  };
+
+  const randomID = (index) => {
+    return Math.floor((Math.random() + (index + 1)) * 1000);
+  };
+
+  const handleAddTodo = () => {
+    if (inputText !== "") {
+      settodoItem((oldData) => {
+        let index = todoItems.indexOf(...oldData);
+        const id = randomID(index + 2);
+        return [...oldData, { id: id, text: inputText }];
+      });
+    }
+
+    setInputText("");
+  };
+
+  const deleteTodo = (id) => {
+    settodoItem(() => {
+      return todoItems.filter((item) => item.id !== id);
+    });
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="main-container bg-alpha">
+        <div className="todo-container">
+          <div className="heading">Got any tasks?</div>
+          <TodoForm
+            change={handleChange}
+            value={inputText}
+            click={handleAddTodo}
+          ></TodoForm>
+          <TodoList todoItems={todoItems} onClick={deleteTodo}></TodoList>
+        </div>
+      </div>
+    </>
   );
 }
 
